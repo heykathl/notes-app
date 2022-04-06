@@ -21,7 +21,7 @@ describe('notes tests', () => {
         expect(notesModel.getNotes()).toEqual([])
     })
 
-    it('set the notes to the result of the api', () => {
-        
-    })
+    // it('set the notes to the result of the api', () => {
+    //     notesModel.setNotes()
+    // })
 })

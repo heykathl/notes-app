@@ -22,15 +22,14 @@ describe("notesView", () => {
   });
 
   it("adds a note from notesView", () => {
-    notesView.getModel().addNote("HELLO");
-    expect(notesView.getModel().getNotes()).toEqual(["HELLO"])
+    notesModel.addNote("HELLO");
+    expect(notesModel.getNotes()).toEqual(["HELLO"])
   });
 
   it("displays the stored notes", () => {
-    // document.body.innerHTML = fs.readFileSync('./index.html');
     notesModel.addNote("HELLO");
     notesView.displayNotes();
-    expect(document.querySelectorAll('div.note').length).toBe(1);
+    expect(document.querySelectorAll('.note').length).toBe(1);
   });
 
   it('adds a note to the model with text', () => {
