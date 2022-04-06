@@ -13,6 +13,17 @@
             return callback(data);
           });
         }
+        createNote(note) {
+          fetch("http://localhost:3000/notes", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ content: note })
+          }).then((response) => response.json()).then((data) => {
+            console.log(data);
+          });
+        }
       };
       module.exports = NotesApi2;
     }
@@ -29,20 +40,25 @@
           this.addButton = document.querySelector("#add-button");
           this.addButton.addEventListener("click", () => {
             const inputField = document.querySelector("#message-input");
+            console.log(inputField.value);
             this.addNote(inputField.value);
-            inputField.value = "";
           });
         }
         getModel() {
           return this.model;
         }
         addNote(note) {
-          this.model.addNote(note);
+          this.api.createNote(note);
           this.displayNotes();
         }
         displayNotes() {
           const clearNotes = document.querySelectorAll(".note");
           clearNotes.forEach((note) => note.remove());
+          this.api.loadNotes((notes2) => {
+            this.model.setNotes(notes2);
+          });
+          console.log("running");
+          console.log(this.model.getNotes());
           const notes = this.model.getNotes();
           notes.forEach((note) => {
             const div = document.createElement("div");
@@ -87,9 +103,5 @@
   var notesApi = new NotesApi();
   var notesModel = new NotesModel();
   var notesView = new NotesView(notesModel, notesApi);
-  notesApi.loadNotes((notes) => {
-    notesModel.setNotes(notes);
-    console.log(notes);
-    notesView.displayNotes();
-  });
+  notesView.displayNotes();
 })();
