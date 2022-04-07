@@ -1,15 +1,20 @@
 class NotesApi {
-  async loadNotes() {
-    const response = await fetch("http://localhost:3000/notes")
-    return response.json();
+  async loadNotes(callback) {
+    try {
+      const response = await fetch("http://localhost:3000/notes")
+      return response.json()
+    } catch (e) {
+      console.log(e)
+      callback()
+    }
       // .then((response) => response.json())
       // .then((data) => {
       //   return callback(data);
       // });
   }
 
-  createNote(note, callback) {
-    fetch("http://localhost:3000/notes", {
+  async createNote(note, callback) {
+    await fetch("http://localhost:3000/notes", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

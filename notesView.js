@@ -20,7 +20,7 @@ class NotesView {
   async addNote(note, callback) {
     // this.model.addNote(note)
     // console.log(note)
-    await this.api.createNote(note);
+    await this.api.createNote(note, () => {});
     callback();
     this.displayNotes();
   }
@@ -29,11 +29,13 @@ class NotesView {
     const clearNotes = document.querySelectorAll(".note");
     clearNotes.forEach((note) => note.remove());
 
-    const serverNotes = await this.api.loadNotes();
+    const serverNotes = await this.api.loadNotes(() => {
+      this.displayError()
+    });
     this.model.setNotes(serverNotes);
-    // console.log(serverNotes)
+    console.log(serverNotes)
     const notes = this.model.getNotes();
-    // console.log(notes)
+    console.log(notes)
     notes.forEach((note) => {
       // console.log(note)
       const div = document.createElement("div");
@@ -41,6 +43,10 @@ class NotesView {
       div.classList.add("note");
       document.querySelector("#main-container").append(div);
     });
+  }
+
+  displayError() {
+    document.write("Oopsie")
   }
 }
 

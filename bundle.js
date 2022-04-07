@@ -8,12 +8,17 @@
   var require_notesApi = __commonJS({
     "notesApi.js"(exports, module) {
       var NotesApi2 = class {
-        async loadNotes() {
-          const response = await fetch("http://localhost:3000/notes");
-          return response.json();
+        async loadNotes(callback) {
+          try {
+            const response = await fetch("http://localhost:3000/notes");
+            return response.json();
+          } catch (e) {
+            console.log(e);
+            callback();
+          }
         }
-        createNote(note, callback) {
-          fetch("http://localhost:3000/notes", {
+        async createNote(note, callback) {
+          await fetch("http://localhost:3000/notes", {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
@@ -48,22 +53,30 @@
           return this.model;
         }
         async addNote(note, callback) {
-          await this.api.createNote(note);
+          await this.api.createNote(note, () => {
+          });
           callback();
           this.displayNotes();
         }
         async displayNotes() {
           const clearNotes = document.querySelectorAll(".note");
           clearNotes.forEach((note) => note.remove());
-          const serverNotes = await this.api.loadNotes();
+          const serverNotes = await this.api.loadNotes(() => {
+            this.displayError();
+          });
           this.model.setNotes(serverNotes);
+          console.log(serverNotes);
           const notes = this.model.getNotes();
+          console.log(notes);
           notes.forEach((note) => {
             const div = document.createElement("div");
             div.innerText = note;
             div.classList.add("note");
             document.querySelector("#main-container").append(div);
           });
+        }
+        displayError() {
+          document.write("Oopsie");
         }
       };
       module.exports = NotesView2;
