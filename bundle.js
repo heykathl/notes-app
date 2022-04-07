@@ -8,12 +8,11 @@
   var require_notesApi = __commonJS({
     "notesApi.js"(exports, module) {
       var NotesApi2 = class {
-        loadNotes(callback) {
-          fetch("http://localhost:3000/notes").then((response) => response.json()).then((data) => {
-            return callback(data);
-          });
+        async loadNotes() {
+          const response = await fetch("http://localhost:3000/notes");
+          return response.json();
         }
-        createNote(note) {
+        createNote(note, callback) {
           fetch("http://localhost:3000/notes", {
             method: "POST",
             headers: {
@@ -21,7 +20,7 @@
             },
             body: JSON.stringify({ content: note })
           }).then((response) => response.json()).then((data) => {
-            console.log(data);
+            callback(data);
           });
         }
       };
@@ -40,25 +39,24 @@
           this.addButton = document.querySelector("#add-button");
           this.addButton.addEventListener("click", () => {
             const inputField = document.querySelector("#message-input");
-            console.log(inputField.value);
-            this.addNote(inputField.value);
+            this.addNote(inputField.value, () => {
+              inputField.value = "";
+            });
           });
         }
         getModel() {
           return this.model;
         }
-        addNote(note) {
-          this.api.createNote(note);
+        async addNote(note, callback) {
+          await this.api.createNote(note);
+          callback();
           this.displayNotes();
         }
-        displayNotes() {
+        async displayNotes() {
           const clearNotes = document.querySelectorAll(".note");
           clearNotes.forEach((note) => note.remove());
-          this.api.loadNotes((notes2) => {
-            this.model.setNotes(notes2);
-          });
-          console.log("running");
-          console.log(this.model.getNotes());
+          const serverNotes = await this.api.loadNotes();
+          this.model.setNotes(serverNotes);
           const notes = this.model.getNotes();
           notes.forEach((note) => {
             const div = document.createElement("div");

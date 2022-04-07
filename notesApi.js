@@ -1,13 +1,14 @@
 class NotesApi {
-  loadNotes(callback) {
-    fetch("http://localhost:3000/notes")
-      .then((response) => response.json())
-      .then((data) => {
-        return callback(data);
-      });
+  async loadNotes() {
+    const response = await fetch("http://localhost:3000/notes")
+    return response.json();
+      // .then((response) => response.json())
+      // .then((data) => {
+      //   return callback(data);
+      // });
   }
 
-  createNote(note) {
+  createNote(note, callback) {
     fetch("http://localhost:3000/notes", {
       method: "POST",
       headers: {
@@ -17,7 +18,7 @@ class NotesApi {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        callback(data);
       });
   }
 }
